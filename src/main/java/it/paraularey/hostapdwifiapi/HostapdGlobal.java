@@ -2,6 +2,7 @@ package it.paraularey.hostapdwifiapi;
 
 import it.paraularey.hostapdwifiapi.eventsystem.EventSystem;
 import java.io.File;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,10 +13,10 @@ public class HostapdGlobal {
   private HostapdCtrl mon;
   private Thread monListener;
 
-  public HostapdGlobal(String path) throws Exception {
+  public HostapdGlobal(String path) throws HostapdException, IOException {
     File socketDestFile = new File(path);
     if (!socketDestFile.exists()) {
-      throw new Exception("Socket path must exists");
+      throw new HostapdException("Socket path must exists");
     }
 
     ctrl = new HostapdCtrl(path);

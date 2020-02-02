@@ -27,10 +27,10 @@ public class HostapdCtrl {
   private EventSystem eventSystem;
   private AbstractSelector selector;
 
-  public HostapdCtrl(String path) throws Exception {
+  public HostapdCtrl(String path) throws HostapdException, IOException {
     File socketDestFile = new File(path);
     if (!socketDestFile.exists()) {
-      throw new Exception("Socket path must exists");
+      throw new HostapdException("Socket path must exists");
     }
 
     attached = false;
@@ -77,18 +77,18 @@ public class HostapdCtrl {
     }
   }
 
-  public void attach() throws Exception {
+  public void attach() throws HostapdException {
     if (this.attached) return;
     String result = request("ATTACH");
     if ("OK\n".equals(result)) {
       this.attached = true;
       logger.info(local.humanReadablePath() + "  ATTACHED successfully");
     } else {
-      throw new Exception("ATTACH failed");
+      throw new HostapdException("ATTACH failed");
     }
   }
 
-  public void detach() throws Exception {
+  public void detach() throws HostapdException, IOException {
     if (!this.attached) return;
     while (pending())
       recv();
@@ -98,7 +98,7 @@ public class HostapdCtrl {
       this.attached = false;
       logger.info(local.humanReadablePath() + "  DETACHED successfully");
     } else {
-      throw new Exception("DETACH failed");
+      throw new HostapdException("DETACH failed");
     }
   }
 
@@ -143,11 +143,11 @@ public class HostapdCtrl {
     return StandardCharsets.UTF_8.decode(rxBuf).toString();
   }
 
-  public String request(String cmd) throws Exception {
+  public String request(String cmd) throws HostapdException {
     return request(cmd, 10);
   }
 
-  public String request(String cmd, int timeout) throws Exception {
+  public String request(String cmd, int timeout) throws HostapdException {
     logger.info(local.humanReadablePath() + ": command executed" + cmd);
     ByteBuffer txBuf = StandardCharsets.UTF_8.encode(cmd);
 
@@ -161,7 +161,7 @@ public class HostapdCtrl {
         e.printStackTrace();
       }
     }
-    throw new Exception("Timeout on waiting response");
+    throw new HostapdException("Timeout on waiting response");
   }
 
   private File createTempSockFile() {
