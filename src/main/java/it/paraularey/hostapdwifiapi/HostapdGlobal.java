@@ -32,15 +32,19 @@ public class HostapdGlobal {
     this.ctrl.close();
   }
 
-  public String request(String cmd) throws Exception {
+  public String request(String cmd) throws HostapdException {
     return request(cmd, 10);
   }
 
-  public String request(String cmd, int timeout) throws Exception {
+  public String request(String cmd, int timeout) throws HostapdException {
     return this.ctrl.request(cmd, timeout);
   }
 
   public EventSystem getEventSystem() {
     return mon.getEventSystem();
+  }
+
+  public boolean isCtrlStarted() {
+    return this.ctrl != null && this.ctrl.isStarted();
   }
 }
